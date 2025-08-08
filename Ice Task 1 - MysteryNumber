@@ -1,0 +1,133 @@
+import { useState, useEffect } from "react";
+import {
+    View,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    StyleSheet,
+} from "react-native";
+
+const App = () => {
+    const [term, setTerm] = useState("");
+    const [result, setResult] = useState("");
+    const [secretNum, setSecretNum] = useState(generateRandomNumber());
+    const [stepCount, setStepCount] = useState(0);
+
+    // Reset guess count when the game restarts
+    useEffect(() => {
+        setStepCount(0);
+    }, [secretNum]);
+
+    function generateRandomNumber() {
+        return Math.floor(Math.random() * 100) + 1;
+    }
+
+    function handleChange(text) {
+        setTerm(text);
+    }
+
+    function checkGuess() {
+        let newResult = "";
+
+        if (term === "") {
+            newResult = "Enter Valid Input";
+        } else if (isNaN(term) || parseInt(term) < 1 || parseInt(term) > 100) {
+            newResult = "Enter a valid number between 1 and 100";
+        } else {
+            const guess = parseInt(term);
+            setStepCount(prev => prev + 1);
+
+            if (guess < secretNum) {
+                newResult = "Higher";
+            } else if (guess > secretNum) {
+                newResult = "Lower";
+            } else {
+                newResult = `🎉 Congratulations! You guessed it in ${stepCount + 1} ${stepCount + 1 === 1 ? "step" : "steps"}!`;
+            }
+        }
+
+        setResult(newResult);
+    }
+
+    function restartGame() {
+        setSecretNum(generateRandomNumber());
+        setTerm("");
+        setResult("");
+        setStepCount(0);
+    }
+
+    return (
+        <View style={styles.container}>
+            <Text style={styles.head}>Guess a Number between 1 to 100</Text>
+
+            <TextInput
+                style={styles.input}
+                placeholder="Enter your guess"
+                onChangeText={handleChange}
+                value={term}
+                keyboardType="numeric"
+            />
+
+            <TouchableOpacity style={styles.button} onPress={checkGuess}>
+                <Text style={styles.buttonText}>Check</Text>
+            </TouchableOpacity>
+
+            <Text style={styles.result}>You Guessed: {result}</Text>
+
+            <TouchableOpacity style={[styles.button, styles.restartButton]} onPress={restartGame}>
+                <Text style={styles.buttonText}>Restart Game</Text>
+            </TouchableOpacity>
+        </View>
+    );
+};
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#f2f2f2",
+        padding: 16,
+    },
+    head: {
+        fontWeight: "bold",
+        fontSize: 24,
+        marginBottom: 20,
+        color: "#333",
+    },
+    input: {
+        padding: 10,
+        borderWidth: 1,
+        borderColor: "#ccc",
+        borderRadius: 10,
+        width: "80%",
+        marginBottom: 20,
+        backgroundColor: "#fff",
+        fontSize: 18,
+    },
+    button: {
+        backgroundColor: "#007BFF",
+        borderRadius: 10,
+        paddingVertical: 12,
+        paddingHorizontal: 24,
+        marginTop: 10,
+    },
+    restartButton: {
+        backgroundColor: "#28a745", // green for restart
+    },
+    buttonText: {
+        color: "#fff",
+        fontSize: 18,
+        fontWeight: "bold",
+    },
+    result: {
+        marginTop: 20,
+        fontSize: 18,
+        color: "#333",
+        fontWeight: "bold",
+        textAlign: "center",
+        paddingHorizontal: 20,
+    },
+});
+
+export default App;
