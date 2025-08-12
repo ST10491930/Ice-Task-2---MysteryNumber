@@ -1,64 +1,66 @@
-import { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
     View,
     Text,
     TextInput,
     TouchableOpacity,
-    StyleSheet,
+    StyleSheet
 } from "react-native";
 
-const App = () => {
-    const [term, setTerm] = useState("");
-    const [result, setResult] = useState("");
-    const [secretNum, setSecretNum] = useState(generateRandomNumber());
-    const [stepCount, setStepCount] = useState(0);
+const App: React.FC = () => {
+    const [term, setTerm] = useState<string>("");
+    const [result, setResult] = useState<string>("");
 
-    // Reset guess count when the game restarts
-    useEffect(() => {
-        setStepCount(0);
-    }, [secretNum]);
+    const [secretNum, setSecretNum] = useState<number>(44); 
 
-    function generateRandomNumber() {
-        return Math.floor(Math.random() * 100) + 1;
-    }
+    const [stepCount, setStepCount] = useState<number>(0);
 
-    function handleChange(text) {
+    function handleChange(text: string): void {
         setTerm(text);
     }
 
-    function checkGuess() {
-        let newResult = "";
+    function checkGuess(): void {
+        let newResult: string = "";
 
         if (term === "") {
-            newResult = "Enter Valid Input";
-        } else if (isNaN(term) || parseInt(term) < 1 || parseInt(term) > 100) {
-            newResult = "Enter a valid number between 1 and 100";
+            newResult = "Enter valid input.";
+        } else if (
+            isNaN(Number(term)) ||
+            parseInt(term) < 1 ||
+            parseInt(term) > 100
+        ) {
+            newResult = "Enter a valid number between 1 and 100.";
         } else {
-            const guess = parseInt(term);
             setStepCount(prev => prev + 1);
 
+            const guess = parseInt(term);
             if (guess < secretNum) {
-                newResult = "Higher";
+                newResult = "Too low! Try again.";
             } else if (guess > secretNum) {
-                newResult = "Lower";
+                newResult = "Too high! Try again.";
             } else {
-                newResult = `🎉 Congratulations! You guessed it in ${stepCount + 1} ${stepCount + 1 === 1 ? "step" : "steps"}!`;
+                newResult = 🎉 Correct! It took you ${stepCount + 1} ${stepCount + 1 === 1 ? "step" : "steps"}.;
             }
         }
 
         setResult(newResult);
     }
 
-    function restartGame() {
-        setSecretNum(generateRandomNumber());
+    function resetGame(): void {
         setTerm("");
         setResult("");
         setStepCount(0);
+        setSecretNum(44); 
     }
 
     return (
         <View style={styles.container}>
-            <Text style={styles.head}>Guess a Number between 1 to 100</Text>
+         <Text style={styles.game}>
+                🔢 Mystery Number Game
+            </Text>
+            <Text style={styles.head}>
+                Guess Number between 1 to 100
+            </Text>
 
             <TextInput
                 style={styles.input}
@@ -72,10 +74,10 @@ const App = () => {
                 <Text style={styles.buttonText}>Check</Text>
             </TouchableOpacity>
 
-            <Text style={styles.result}>You Guessed: {result}</Text>
+            <Text style={styles.result}>{result}</Text>
 
-            <TouchableOpacity style={[styles.button, styles.restartButton]} onPress={restartGame}>
-                <Text style={styles.buttonText}>Restart Game</Text>
+            <TouchableOpacity style={styles.button1} onPress={resetGame}>
+                <Text style={styles.buttonText1}>Reset</Text>
             </TouchableOpacity>
         </View>
     );
@@ -89,9 +91,15 @@ const styles = StyleSheet.create({
         backgroundColor: "#f2f2f2",
         padding: 16,
     },
+    game: {
+        fontWeight: "bold",
+        fontSize: 23,
+        marginBottom: 20,
+        color: "#333",
+    },
     head: {
         fontWeight: "bold",
-        fontSize: 24,
+        fontSize: 18,
         marginBottom: 20,
         color: "#333",
     },
@@ -110,10 +118,6 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         paddingVertical: 12,
         paddingHorizontal: 24,
-        marginTop: 10,
-    },
-    restartButton: {
-        backgroundColor: "#28a745", // green for restart
     },
     buttonText: {
         color: "#fff",
@@ -125,9 +129,19 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: "#333",
         fontWeight: "bold",
-        textAlign: "center",
-        paddingHorizontal: 20,
+    },
+    button1: {
+        backgroundColor: "#FF3B30",
+        borderRadius: 10,
+        paddingVertical: 12,
+        paddingHorizontal: 24,
+        marginTop: 12,
+    },
+    buttonText1: {
+        color: "#fff",
+        fontSize: 18,
+        fontWeight: "bold",
     },
 });
 
-export default App;
+export default App;
